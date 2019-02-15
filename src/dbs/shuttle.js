@@ -40,7 +40,7 @@ module.exports = {
     }
     await methodsByName.open()
     for (const shuttle of shuttles) {
-      await methodsByName.write(shuttle.name, JSON.stringify(shuttle))
+      await methodsByName.write(shuttle.name, shuttle)
     }
     return methodsByName
   }

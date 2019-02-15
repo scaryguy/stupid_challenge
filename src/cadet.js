@@ -7,14 +7,22 @@ const TRY_FILENAMES = ['template', 'template/welcome-cadet.md'].map(basename =>
   path.resolve(__dirname, basename)
 )
 
+// console.log("fiLE NAMESSS", TRY_FILENAMES);
+
 function logWelcomeLetter ({ cosmonautId, shuttle }) {
   bluebird
     .filter(TRY_FILENAMES, filename =>
-      fs.lstat(filename).then(stat => stat.isFile && !stat.isDirectory)
+      fs
+        .lstat(filename)
+        .then(stat => stat.isFile && !stat.isDirectory)
+        .then(result => result)
     )
     .then(filenames => {
       // take the first file, assume it's the desired template
-      const templateFilename = filenames[0]
+      // console.log("FILENAMES", filenames);
+
+      const templateFilename =
+        filenames.length > 1 ? filenames[0] : TRY_FILENAMES[1]
       log(`selected cadet welcome template file: ${templateFilename}`)
       return fs.readFile(templateFilename).then(content => {
         console.log(
@@ -26,7 +34,9 @@ function logWelcomeLetter ({ cosmonautId, shuttle }) {
         )
       })
     })
-    .catch(() => {
+    .catch(e => {
+      console.log(e)
+
       throw new Error(`failed to log cosmonaut ${cosmonautId} welcome letter`)
     })
 }
